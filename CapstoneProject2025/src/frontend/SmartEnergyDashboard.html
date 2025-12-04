@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SmartEnergy Dashboard</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f4f6fa;
+            font-family: "Segoe UI", sans-serif;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 260px;
+            min-height: 100vh;
+            background: #0a2540;
+            color: white;
+            padding: 25px;
+            position: fixed;
+            left: 0;
+            top: 0;
+        }
+
+        .sidebar h3 {
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+
+        .menu-item {
+            padding: 12px 10px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.2s ease;
+            text-decoration: none;
+            color: white;
+        }
+
+        .menu-item i {
+            font-size: 20px;
+            margin-right: 12px;
+        }
+
+        .menu-item:hover {
+            background: #143d66;
+        }
+
+        /* ===== CONTENT AREA ===== */
+        .content {
+            margin-left: 280px;
+            padding: 40px;
+        }
+
+        .section-title {
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #0a2540;
+        }
+
+        .documentation-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 1px solid #e5e9f0;
+            box-shadow: 0px 2px 6px rgba(0,0,0,0.07);
+        }
+
+        .doc-header {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .doc-links a {
+            display: block;
+            color: #0a4b78;
+            font-weight: 500;
+            text-decoration: none;
+            margin-bottom: 5px;
+        }
+
+        .doc-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- ================== SIDEBAR ================== -->
+<div class="sidebar">
+    <h3><i class="bi bi-lightning-charge-fill"></i> SmartEnergy</h3>
+
+    <a class="menu-item" href="https://sireieiplus.s3.us-east-1.amazonaws.com/SmartEnergyDocs/SmartEnergyPrediction.html" target="_blank">
+        <i class="bi bi-speedometer2"></i> Performance
+    </a>
+
+    <a class="menu-item" href="https://sireieiplus.s3.us-east-1.amazonaws.com/SmartEnergyDocs/OccupancyPrediction.html" target="_blank">
+        <i class="bi bi-person-badge-fill"></i> Occupancy Prediction
+    </a>
+
+    <a class="menu-item" href="https://sireieiplus.s3.us-east-1.amazonaws.com/SmartEnergyDocs/SmartEnergyCostenergy.html" target="_blank">
+        <i class="bi bi-calculator-fill"></i> Predict Electric Consumption
+    </a>
+
+    <a class="menu-item" href="https://sireieiplus.s3.us-east-1.amazonaws.com/SmartEnergyDocs/smart_energy_chatbot.html" target="_blank">
+        <i class="bi bi-robot"></i> Chatbot
+    </a>
+</div>
+
+<!-- ================== MAIN CONTENT ================== -->
+<div class="content">
+
+    <h2 class="section-title">Documentation</h2>
+    <p class="text-muted">Reference notebooks and PDF files for internal analysis.</p>
+
+    <!-- ENERGY FAILURE -->
+    <div class="documentation-card">
+        <div class="doc-header">Energy Failure Prediction</div>
+        <div class="doc-links">
+            <a href="https://sireieiplus.s3.us-east-1.amazonaws.com/SmartEnergyDocs/EQSmartEnergyFailurePrediction+(4).ipynb" target="_blank">
+                📘 Jupyter Notebook
+            </a>
+            <a href="https://sireieiplus.s3.us-east-1.amazonaws.com/SmartEnergyDocs/EQSmartEnergyFailurePredictionPDF.pdf" target="_blank">
+                📄 Notebook PDF
+            </a>
+        </div>
+    </div>
+
+    <!-- OCCUPANCY -->
+    <div class="documentation-card">
+        <div class="doc-header">Occupancy Room Prediction</div>
+        <div class="doc-links">
+            <a href="https://sireieiplus.s3.us-east-1.amazonaws.com/SmartEnergyDocs/Occupancy_Rooms_Updated_(1)_(3)+(1).ipynb" target="_blank">
+                📘 Jupyter Notebook
+            </a>
+            <a href="https://sireieiplus.s3.us-east-1.amazonaws.com/SmartEnergyDocs/Occupancy_Rooms_UpdatedPDF.pdf" target="_blank">
+                📄 Notebook PDF
+            </a>
+        </div>
+    </div>
+
+    <!-- COST OPTIMIZATION -->
+    <div class="documentation-card">
+        <div class="doc-header">Cost Optimization</div>
+        <div class="doc-links">
+            <a href="https://sireieiplus.s3.us-east-1.amazonaws.com/SmartEnergyDocs/Cost_Optimization_ML_Guide_v2_(1).ipynb" target="_blank">
+                📘 Jupyter Notebook
+            </a>
+            <a href="https://sireieiplus.s3.us-east-1.amazonaws.com/SmartEnergyDocs/Cost_Optimization_ML_Guide_v2.pdf" target="_blank">
+                📄 Notebook PDF
+            </a>
+        </div>
+    </div>
+
+    <!-- PRESENTATION -->
+    <div class="documentation-card">
+        <div class="doc-header">Project Presentation</div>
+        <a href="https://remplazame.com" target="_blank">📊 Open Presentation</a>
+    </div>
+
+    <!-- GITHUB -->
+    <div class="documentation-card">
+        <div class="doc-header">GitHub Repository</div>
+        <a href="https://remplazame.com" target="_blank">💻 Open GitHub</a>
+    </div>
+
+</div>
+
+</body>
+</html>

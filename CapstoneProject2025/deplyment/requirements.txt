@@ -1,0 +1,15 @@
+# === AWS SDK ===
+boto3>=1.35.0
+
+# === OpenAI SDK ===
+openai>=1.40.0
+
+# === DeepSeek API (usaremos requests para interactuar con su API REST) ===
+requests>=2.32.3
+
+# === MySQL Connector ===
+pymysql>=1.1.1
+
+# === Utilidades ===
+urllib3>=2.2.2
+python-dotenv>=1.0.1  # opcional, por si quieres cargar variables locales

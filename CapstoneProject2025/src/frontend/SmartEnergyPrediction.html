@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>IoT Failure Check – Dashboard</title>
+<style>
+  :root{--bg:#0b1220;--card:#121a2b;--text:#e9eef7;--muted:#9fb0c5;--accent:#4cc9f0;--ok:#22c55e;--err:#ef4444;}
+  body{margin:0;background:linear-gradient(180deg,#0b1220,#0d1630);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;color:var(--text)}
+  .wrap{max-width:1200px;margin:40px auto;padding:0 16px}
+  .card{background:var(--card);border:1px solid #1f2a44;border-radius:18px;box-shadow:0 8px 24px rgba(0,0,0,.25);padding:20px}
+  h1{font-weight:700;margin:0 0 12px;font-size:24px}
+  p.lead{color:var(--muted);margin:-6px 0 18px}
+  .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+  @media (max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:560px){.grid{grid-template-columns:1fr}}
+  label{font-size:12px;color:var(--muted);font-weight:600}
+  input,select{width:100%;padding:10px 12px;margin-top:4px;border-radius:12px;border:1px solid #253253;background:#0f1626;color:var(--text);box-sizing:border-box}
+  .row{display:flex;gap:12px;flex-wrap:wrap}
+  .col{flex:1 1 180px}
+  .pill{display:inline-flex;gap:8px;align-items:center;background:#0f1626;border:1px solid #253253;border-radius:999px;padding:6px 10px}
+  .actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+  button{all:unset;background:var(--accent);color:#08111f;padding:12px 20px;border-radius:12px;font-weight:700;cursor:pointer;transition:all .2s}
+  button:hover{background:#3db8df;transform:translateY(-1px)}
+  button.secondary{background:#233250;color:var(--text)}
+  button.secondary:hover{background:#2d3e61}
+  button:disabled{opacity:0.5;cursor:not-allowed}
+  pre{background:#0a1120;border:1px solid #233250;border-radius:12px;padding:12px;white-space:pre-wrap;font-size:13px;overflow-x:auto}
+  .status{font-weight:700;padding:16px 20px;border-radius:12px;margin-top:16px;display:none;font-size:16px}
+  .status.show{display:block}
+  .ok{background:rgba(34,197,94,.15);border:1px solid var(--ok);color:#b8f7c8}
+  .err{background:rgba(239,68,68,.15);border:1px solid var(--err);color:#fecaca}
+  .warning{background:rgba(251,191,36,.15);border:1px solid #fbbf24;color:#fef3c7}
+  small.hint{color:#8aa0bc;font-size:11px}
+  .response-box{margin-top:12px}
+  .loading{display:none;align-items:center;gap:8px;color:var(--accent);font-weight:600}
+  .loading.show{display:flex}
+  .spinner{width:16px;height:16px;border:2px solid var(--accent);border-top-color:transparent;border-radius:50%;animation:spin 0.6s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  h3{font-size:18px;margin:24px 0 12px;color:var(--text)}
+  .section{margin-top:24px;padding-top:24px;border-top:1px solid #1f2a44}
+  .info-box{background:rgba(76,201,240,.1);border:1px solid rgba(76,201,240,.3);border-radius:12px;padding:12px;margin-bottom:16px}
+  .info-box p{margin:4px 0;font-size:13px}
+  .result-main{display:flex;align-items:center;gap:16px;margin-bottom:16px}
+  .result-status{font-size:28px;font-weight:800;text-transform:uppercase;letter-spacing:1px}
+  .result-prob{font-size:20px;font-weight:600;color:var(--muted)}
+  .result-prob .value{font-size:32px;font-weight:800;display:block;margin-top:4px}
+  .result-detail{background:#0f1626;border:1px solid #253253;border-radius:12px;padding:16px;margin-top:12px}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>IoT Failure Detection System</h1>
+    <p class="lead">Capture sensor data and send it to your API Gateway.</p>
+
+    <div class="info-box">
+      <p><strong>📡 Prediction Endpoint:</strong> https://5q6pe4lffj.execute-api.us-east-1.amazonaws.com/DEV/Abnormal</p>
+      <p><strong>🧪 Synthetic Writer:</strong> https://luvhyijxnd.execute-api.us-east-1.amazonaws.com/DEV/IoTDevice</p>
+    </div>
+
+    <!-- INPUT GRID -->
+    <div class="grid">
+      <div><label>power_w</label><input type="number" id="power_w" value="4200"></div>
+      <div><label>voltage_v</label><input type="number" id="voltage_v" value="230"></div>
+      <div><label>current_a</label><input type="number" id="current_a" value="18.3"></div>
+      <div><label>relay_on</label><select id="relay_on"><option value="1">1</option></select></div>
+
+      <div><label>energy_wh_acc</label><input type="number" id="energy_wh_acc" value="550000"></div>
+      <div><label>presence</label><select id="presence"><option value="1">1</option></select></div>
+      <div><label>presence_confidence</label><input type="number" id="presence_confidence" value="0.95"></div>
+      <div><label>temp_c_avg</label><input type="number" id="temp_c_avg" value="45.2"></div>
+
+      <div><label>Bracker_amp</label><input type="number" id="Bracker_amp" value="30"></div>
+      <div><label>max_watts</label><input type="number" id="max_watts" value="5500"></div>
+      <div><label>power_rate</label><input id="power_rate" readonly></div>
+      <div><label>hour</label><input type="number" id="hour" value="10"></div>
+
+      <div><label>is_daytime</label><select id="is_daytime"><option value="1">1</option></select></div>
+      <div><label>weekday</label><input type="number" id="weekday" value="2"></div>
+      <div><label>Month</label><input type="number" id="month" value="6"></div>
+      <div><label>is_weekend</label><select id="is_weekend"><option value="0">0</option></select></div>
+
+      <div><label>voltage_type</label>
+        <select id="voltage_type"><option value="1">1 (220V)</option></select>
+      </div>
+      <div><label>is_110v</label><input id="is_110v" disabled></div>
+      <div><label>is_220v</label><input id="is_220v" disabled></div>
+      <div><label>illuminance_lux</label><input type="number" id="illuminance_lux" value="420"></div>
+
+      <div><label>area</label>
+        <select id="area_select"><option value="1">1</option></select>
+      </div>
+
+      <div><label>device_type</label>
+        <select id="device_select">
+          <option value="1">Water Heater</option>
+          <option value="2">Fridge</option>
+        </select>
+      </div>
+
+      <div><label>outlet_id</label><input type="number" id="outlet_id" value="12"></div>
+
+      <div class="col">
+        <label>&nbsp;</label>
+        <div class="pill"><input id="include_onehots" type="checkbox" checked> <span>Include one-hot</span></div>
+      </div>
+    </div>
+
+    <!-- BUTTONS -->
+    <div class="actions">
+      <button id="sendBtn">Send to API</button>
+      <button class="secondary" id="fillExample">Normal Example</button>
+      <button class="secondary" id="fillAnomaly">Anomaly Example</button>
+    </div>
+
+    <!-- PLACEHOLDER FOR SYNTHETIC BUTTON (JS lo inserta) -->
+
+    <div class="loading" id="loading">
+      <div class="spinner"></div><span>Sending request...</span>
+    </div>
+
+    <div class="section">
+      <h3>Payload Sent</h3>
+      <pre id="payloadBox">{}</pre>
+    </div>
+
+    <div class="section">
+      <h3>API Response</h3>
+      <div id="resp" class="status"></div>
+      <div id="responseDetails" class="response-box" style="display:none;">
+        <div class="result-detail">
+          <pre id="responseRaw"></pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- SCRIPT -->
+<script>
+const API_URL = "https://5q6pe4lffj.execute-api.us-east-1.amazonaws.com/DEV/Abnormal";
+const API_SAVE_SYNTH = "https://luvhyijxnd.execute-api.us-east-1.amazonaws.com/DEV/IoTDevice";
+
+const $ = id => document.getElementById(id);
+function toNum(v){ const n=Number(v); return Number.isFinite(n)?n:0; }
+
+// Auto fields
+function computePowerRate(){
+  $('power_rate').value = (toNum($('power_w').value) / toNum($('max_watts').value)).toFixed(4);
+}
+function updateWeekend(){
+  $('is_weekend').value = (Number($('weekday').value)>=5) ? "1" : "0";
+}
+function updateVoltageFlags(){
+  const vt = Number($('voltage_type').value);
+  $('is_110v').value = vt===0?1:0;
+  $('is_220v').value = vt===1?1:0;
+}
+
+computePowerRate();
+updateWeekend();
+updateVoltageFlags();
+
+// Build payload
+function buildPayload(){
+  const p = {
+    power_w: toNum($('power_w').value),
+    voltage_v: toNum($('voltage_v').value),
+    current_a: toNum($('current_a').value),
+    relay_on: toNum($('relay_on').value),
+    energy_wh_acc: toNum($('energy_wh_acc').value),
+    presence: toNum($('presence').value),
+    presence_confidence: toNum($('presence_confidence').value),
+    temp_c_avg: toNum($('temp_c_avg').value),
+    Bracker_amp: toNum($('Bracker_amp').value),
+    max_watts: toNum($('max_watts').value),
+    power_rate: toNum($('power_rate').value),
+    hour: toNum($('hour').value),
+    is_daytime: toNum($('is_daytime').value),
+    weekday: toNum($('weekday').value),
+    Month: toNum($('month').value),
+    is_weekend: toNum($('is_weekend').value),
+    voltage_type: toNum($('voltage_type').value),
+    is_110v: toNum($('is_110v').value),
+    is_220v: toNum($('is_220v').value),
+    illuminance_lux: toNum($('illuminance_lux').value),
+    area: toNum($('area_select').value),
+    device_type: toNum($('device_select').value),
+    outlet_id: toNum($('outlet_id').value)
+  };
+
+  $('payloadBox').textContent = JSON.stringify(p,null,2);
+  return p;
+}
+
+// 🔥 FIXED FUNCTION → Save Synthetic Sample EXACTLY AS YOUR API REQUIRES
+async function saveSyntheticRecord(){
+  const b = buildPayload();
+
+  const payloadDB = {
+    device_id: "shelly0" + b.device_type,
+    ts: new Date().toISOString().slice(0,19).replace("T"," "),
+    power_w: b.power_w,
+    voltage_v: b.voltage_v,
+    current_a: b.current_a,
+    relay_on: b.relay_on,
+    energy_wh_acc: b.energy_wh_acc,
+    firmware: "1.12.0",
+    location: "HQ-Lab"
+  };
+
+  try{
+    const r = await fetch(API_SAVE_SYNTH,{
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify(payloadDB)
+    });
+
+    if(!r.ok) throw new Error("HTTP "+r.status);
+    alert("✅ Synthetic sample saved successfully");
+
+  }catch(e){
+    alert("❌ Error saving synthetic sample: "+e.message);
+  }
+}
+
+// Insert Synthetic button
+const btn = document.createElement("button");
+btn.textContent = "Add as Synthetic Sample";
+btn.className = "secondary";
+btn.onclick = saveSyntheticRecord;
+document.querySelector(".actions").appendChild(btn);
+
+// Send prediction
+async function send(){
+  const body = buildPayload();
+
+  $('resp').className='status';
+  $('resp').textContent='';
+  $('loading').classList.add('show');
+  $('sendBtn').disabled=true;
+
+  try{
+    const r = await fetch(API_URL,{
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body:JSON.stringify(body)
+    });
+
+    $('loading').classList.remove('show');
+    $('sendBtn').disabled=false;
+
+    const data = await r.json();
+    $('resp').innerHTML = JSON.stringify(data,null,2);
+    $('resp').className="status show ok";
+
+  }catch(e){
+    $('loading').classList.remove('show');
+    $('sendBtn').disabled=false;
+    $('resp').className="status show err";
+    $('resp').textContent="❌ "+e.message;
+  }
+}
+
+$('sendBtn').addEventListener('click', send);
+
+// Examples
+$('fillExample').addEventListener('click', ()=>{
+  $('power_w').value=4200;
+  computePowerRate(); buildPayload();
+});
+$('fillAnomaly').addEventListener('click', ()=>{
+  $('power_w').value=500;
+  computePowerRate(); buildPayload();
+});
+</script>
+
+</body>
+</html>

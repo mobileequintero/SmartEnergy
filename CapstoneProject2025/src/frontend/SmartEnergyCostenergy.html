@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SmartEnergy - Consumption Predictor</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(180deg, #f2f6fc, #dce8f8);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+        h1 {
+            color: #003366;
+            margin-bottom: 10px;
+        }
+        p.subtitle {
+            color: #555;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+        input {
+            width: 80%;
+            padding: 10px;
+            margin: 6px 0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1rem;
+        }
+        button {
+            background-color: #0078d7;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-top: 15px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        button:hover {
+            background-color: #005fa3;
+        }
+        .result {
+            margin-top: 25px;
+            font-size: 1.1rem;
+        }
+        .ok {
+            color: #007a00;
+        }
+        .alert {
+            color: #d00000;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>SmartEnergy</h1>
+        <p class="subtitle">Predict Electric Consumption</p>
+
+        <input id="f1" type="number" placeholder="Feature 1 (e.g., Voltage = 0.8)" step="any" />
+        <input id="f2" type="number" placeholder="Feature 2 (e.g., Current =2.3)" step="any" />
+        <input id="f3" type="number" placeholder="Feature 3 (e.g., Power = 1.5 )" step="any" />
+        <input id="f4" type="number" placeholder="Feature 4 (e.g., Temperature = 0.7)" step="any" />
+
+        <button onclick="predict()">Predict Consumption</button>
+
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        async function predict() {
+            const f1 = parseFloat(document.getElementById('f1').value);
+            const f2 = parseFloat(document.getElementById('f2').value);
+            const f3 = parseFloat(document.getElementById('f3').value);
+            const f4 = parseFloat(document.getElementById('f4').value);
+            const resultDiv = document.getElementById('result');
+
+            resultDiv.innerHTML = "⏳ Processing prediction...";
+
+            try {
+                const response = await fetch("https://5q6pe4lffj.execute-api.us-east-1.amazonaws.com/DEV/CostOptimizacion", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        features: [f1, f2, f3, f4]
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!data.body) {
+                    resultDiv.innerHTML = "⚠️ Unexpected response format.";
+                    return;
+                }
+
+                const body = JSON.parse(data.body);
+
+                if (body.ok) {
+                    const r = body.results[0];
+                    const labelText = r.label === 0 ? "Normal" : "Abnormal";
+                    const prob = (r.prob_anormal * 100).toFixed(1);
+
+                    resultDiv.innerHTML = `
+                        ✅ Prediction: <b>${labelText}</b><br>
+                        Probability of abnormal: <b>${prob}%</b>
+                    `;
+                    resultDiv.className = "result ok";
+                } else {
+                    resultDiv.innerHTML = "⚠️ Error: " + body.error;
+                    resultDiv.className = "result alert";
+                }
+            } catch (err) {
+                resultDiv.innerHTML = "❌ Error calling API: " + err.message;
+                resultDiv.className = "result alert";
+            }
+        }
+    </script>
+</body>
+</html>

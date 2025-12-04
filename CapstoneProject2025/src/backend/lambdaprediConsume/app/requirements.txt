@@ -1,0 +1,18 @@
+﻿# --- Librerías de Ciencia de Datos y Modelo ---
+numpy==2.0.2
+pandas==2.2.3
+scikit-learn==1.4.2
+joblib==1.4.2
+
+# --- Librerías de AWS (ya incluidas, pero se mantienen) ---
+boto3==1.35.36
+
+# --- Librerías para Servir la API Web (ECS/Docker) ---
+# Flask: Framework web ligero para crear el endpoint /predict
+Flask==3.1.2 
+# Gunicorn: Servidor WSGI para ejecutar la aplicación Flask en producción
+gunicorn==22.0.0
+
+
+# --- Librerías HTTP y Utilidades ---
+requests==2.32.3
